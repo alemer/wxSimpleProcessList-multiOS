@@ -8,6 +8,10 @@ Checkout git project with
 git clone https://github.com/alemer/wxWidget-test-project.git
 cd wxWidget-test-project/tools
 
+TODO: 	Makefile 
+	Skeleton file creation 
+	Automated tools download and extraction
+
 1. Download the Crosscompile toolchain neccessary for you into tools
 	wget -c http://alemer.de/source_tools/source_tools/gcc-5.1.0-i686-mingw32.tar.gz
 	wget -c http://alemer.de/source_tools/source_tools/gcc-5.1.0-x86_64-mingw32.tar.gz
