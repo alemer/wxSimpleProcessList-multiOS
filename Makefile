@@ -29,15 +29,17 @@ linux: linPrep linPath
 win64_static: win64Prep_static win64Path
 	@echo "Defined win64 Static as target - Building";
 	$(eval HOST=x86_64-pc-mingw32)
-	$(eval GCCWINPATH=./tools/gcc-5.1.0-${HOST}-sstatic/bin)
-	$(eval WXOUTPUT=./output/win64_static/$(OUTFILENAME)_static.exe)
+	$(eval GCCWINPATH=./tools/gcc-5.1.0-${HOST}-static/bin)
+	$(eval WXOUTPUT=./output/win64_static/$(OUTFILENAME).exe)
 	$(eval WXCONFIG=./wx-config-${HOST}-static)
 	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-${HOST}_static)
-	$(eval WXWINPATH=$(WXPREFIX)/bin)
+	$(eval WXWINPATH=$(WXPREFIX)/$(HOST)/bin)
+	$(eval WXLIBPATH=$(GCCWINPATH)/../$(HOST)/lib)
 	$(eval WININCFLAGS=-I./$(WXPREFIX)/lib64/wx/include -I./$(WXPREFIX)/include -I$(GCCWINPATH)/../include)
-	$(eval WINLDFLAGS="-L$(GCCWINPATH)/../lib64 -L$(WXPREFIX)/lib64 -lwx_baseu-3.0-x86_64-pc-mingw32")
+	$(eval WINLDFLAGS=-L$(GCCWINPATH)/../lib64 -L$(WXPREFIX)/lib64 -lstdc++.dll -lstdc++)
 	$(eval export PATH=$(GCCWINPATH):$(WXWINPATH):${PATH})
-	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=yes --host=$(HOST)` $(INCFLAGS) $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=yes --host=$(HOST)`
+	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=yes --host=$(HOST)` $(INCFLAGS) $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=yes --host=$(HOST)` $(WINLDFLAGS)
+	cp ${WXLIBPATH}/libgcc_s_seh-1.dll ${WXLIBPATH}/libstdc++-6.dll ./output/win64_static
 
 win64: win64Prep win64Path
 	@echo "Defined win64 as target - Building"; 
@@ -77,7 +79,7 @@ all:
 	@echo "'make cleanTools' 	- Deletes the toolchain";
 	exit 0;	
 
-tools: wget tar links
+tools: wget tar links clean_targz
 
 wget: 
 	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/gcc-5.1.0-i686-mingw32.tar.gz;
@@ -125,6 +127,9 @@ linPath:
 	@echo "Adjust LD_LIBRARY_PATH befor execution"
 	@echo 'export LD_LIBRARY_PATH=./tools/wxWidgets-3.0.2-x86_64_pc_linux/lib64:$$LD_LIBRARY_PATH'
 
+clean_targz:
+	rm -rf tools/*.tar.gz
+	
 clean:
 	rm -f `find src/ -iname ".o"` 
 	rm -f `find output/ -iname "*$(OUTFILENAME)*"`
