@@ -49,10 +49,13 @@ win64: win64Prep win64Path
 	$(eval WXCONFIG=./wx-config-${HOST})
 	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-${HOST})
 	$(eval WXWINPATH=$(WXPREFIX)/bin)
+	$(eval WXLIBPATH=$(GCCWINPATH)/../lib)
 	$(eval WININCFLAGS=-I./tools/wxWidgets-3.0.2-${HOST}/lib64/wx/include/x86_64-mingw32-msw-unicode-3.0)
 	$(eval WINLDFLAGS="-L$(GCCWINPATH)/../lib -L$(WXPREFIX)/lib64" -L$(GCCWINPATH)/../lib -lwx_baseu-3.0-x86_64-mingw32.dll -lwx_mswu_core-3.0-x86_64-mingw32.dll)
 	$(eval export PATH=$(GCCWINPATH):$(WXWINPATH):${PATH})
 	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=no --host=$(HOST)` $(INCFLAGS) $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=no --host=$(HOST)`
+	cp ${WXLIBPATH}/libgcc_s_seh-1.dll ${WXLIBPATH}/libstdc++-6.dll ./output/win64
+	cp ${WXWINPATH}/../lib/wxmsw30u_core_gcc_custom.dll ${WXWINPATH}/../lib/wxbase30u_gcc_custom.dll ./output/win64
 
 win32: win32Prep win32Path
 	@echo "Defined win32 as target - Building"; 
@@ -62,9 +65,12 @@ win32: win32Prep win32Path
 	$(eval WXCONFIG=./wx-config-${HOST})
 	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-${HOST})
 	$(eval WXWINPATH=$(WXPREFIX)/bin)
+	$(eval WXLIBPATH=$(GCCWINPATH)/../lib)
 	$(eval WINLDFLAGS="-L$(WXPREFIX)/lib" -lwx_mswu-3.0-${HOST}.dll)
 	$(eval export PATH=$(GCCWINPATH):$(WXWINPATH):${PATH})
 	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=no --host=$(HOST)` $(INCFLAGS) $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=no --host=$(HOST)`
+	cp ${WXLIBPATH}/libgcc_s_sjlj-1.dll ${WXLIBPATH}/libstdc++-6.dll ./output/win32
+	cp ${WXWINPATH}/../lib/wxmsw30u_gcc_custom.dll ./output/win32
 	
 all: 
 	@echo "Use one of the target definitions: win32, win64, linux";
