@@ -23,8 +23,8 @@ linux: linPrep linPath
 	@echo "Defined linux as target - Building ... "; 
 	$(eval WXOUTPUT=./output/linux/$(OUTFILENAME))
 	$(eval WXCONFIG=./wx-config-linux)
-	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-x86_64_pc_linux)
-	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) $(CXXFLAGS) $(LDLIBS) $(INCFLAGS)` $(TEST_SOURCES) -o $(WXOUTPUT)
+	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-x86_64_linux)
+	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) $(CXXFLAGS) $(LDLIBS) $(INCFLAGS)` -I./$(WXPREFIX)/lib64/wx/include -I./$(WXPREFIX)/include $(TEST_SOURCES) -o $(WXOUTPUT)
 
 win64_static: win64Prep_static win64Path
 	@echo "Defined win64 Static as target - Building";
@@ -131,7 +131,7 @@ win32Path:
 
 linPath:
 	@echo "Adjust LD_LIBRARY_PATH befor execution"
-	@echo 'export LD_LIBRARY_PATH=./tools/wxWidgets-3.0.2-x86_64_pc_linux/lib64:$$LD_LIBRARY_PATH'
+	@echo 'export LD_LIBRARY_PATH=./tools/wxWidgets-3.0.2-x86_64_linux/lib64:$LD_LIBRARY_PATH'
 
 clean_targz:
 	rm -rf tools/*.tar.gz

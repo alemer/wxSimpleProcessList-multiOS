@@ -17,16 +17,19 @@ private:
     void OnHello(wxCommandEvent& event);
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnRefresh(wxCommandEvent& event);
     wxDECLARE_EVENT_TABLE();
 };
 enum
 {
-    ID_Hello = 1
+    ID_Hello = 1,
+    ID_Refresh=0x00FA
 };
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(ID_Hello,   MyFrame::OnHello)
     EVT_MENU(wxID_EXIT,  MyFrame::OnExit)
     EVT_MENU(wxID_ABOUT, MyFrame::OnAbout)
+    EVT_MENU(ID_Refresh, MyFrame::OnRefresh)
 wxEND_EVENT_TABLE()
 wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
@@ -41,6 +44,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     wxMenu *menuFile = new wxMenu;
     menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
                      "Help string shown in status bar for this menu item");
+    menuFile->Append(ID_Refresh, "&Refresh...\tCtrl-R", " Refresh page");
     menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
     wxMenu *menuHelp = new wxMenu;
@@ -64,4 +68,8 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 void MyFrame::OnHello(wxCommandEvent& event)
 {
     wxLogMessage("Hello world from wxWidgets!");
+}
+void MyFrame::OnRefresh(wxCommandEvent& event)
+{
+    wxLogMessage("Refresh the process list\n!");
 }
