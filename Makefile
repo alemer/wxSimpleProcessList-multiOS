@@ -82,7 +82,7 @@ all:
 	@echo "'make win32' 		- Builds the executable for 32Bit Windows ";
 	@echo "'make win64' 		- Builds the executable for 64Bit Windows ";
 	@echo "'make win64_static' 	- Builds the executable for Static 64Bit Windows ";
- 	@echo "'make linux' 		- Builds the executable for linux. You need to have gcc toolchain installed ";
+	@echo "'make linux'         - Builds the executable for linux. You need to have gcc toolchain installed ";
 	@echo "'make clean' 		- Deletes all objects and created executables";
 	@echo "'make tools' 		- Download and initalizes wxWidget dev environment and GCC mingw win32 toolchain";
 	@echo " NOTE 				- You will have to install the dev toolchain for you Linux System youself (gcc, binutils ...)";
