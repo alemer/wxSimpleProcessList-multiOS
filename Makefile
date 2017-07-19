@@ -98,7 +98,7 @@ wget:
 	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxWidgets-3.0.2-i686-pc-mingw32.tar.gz;
 	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxWidgets-3.0.2-x86_64-pc-mingw32.tar.gz;
 	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxWidgets-3.0.2-x86_64-pc-mingw32_static.tar.gz;
-	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxwidgets-3.0.2-x86_64_linux.tar.gz;
+	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxWidgets-3.0.2-x86_64_linux.tar.gz;
 	
 tar:
 	tar --directory=./tools -xf ./tools/gcc-5.1.0-i686-mingw32.tar.gz;
@@ -107,7 +107,7 @@ tar:
 	tar --directory=./tools -xf ./tools/wxWidgets-3.0.2-i686-pc-mingw32.tar.gz;
 	tar --directory=./tools -xf ./tools/wxWidgets-3.0.2-x86_64-pc-mingw32.tar.gz;
 	tar --directory=./tools -xf ./tools/wxWidgets-3.0.2-x86_64-pc-mingw32_static.tar.gz;
-	tar --directory=./tools -xf ./tools/wxwidgets-3.0.2-x86_64_linux.tar.gz;
+	tar --directory=./tools -xf ./tools/wxWidgets-3.0.2-x86_64_linux.tar.gz;
 	
 links:
 	ln -s tools/wxWidgets-3.0.2-i686-pc-mingw32/bin/wx-config wx-config-i686-pc-mingw32;
