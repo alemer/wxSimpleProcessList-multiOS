@@ -1,9 +1,9 @@
 # wxWidget-test project.
 # 1. Download the neccessary tools at http://alemer.de/source_tools/what_ever.tar.gz
-OUTFILENAME = wxHelloWorld
+OUTFILENAME = prozShow
 
 # Define our sources, calculate the dependecy files and object files
-TEST_SOURCES := src/wxHelloWorld.cpp 
+TEST_SOURCES := src/wxProzShow.cpp 
 TEST_OBJECTS := $(patsubst %.cpp, %.o, ${TEST_SOURCES})
 TEST_DEPS := $(patsubst %.cpp, %.d, ${TEST_SOURCES})	
 
@@ -24,7 +24,7 @@ linux: linPrep linPath
 	$(eval WXOUTPUT=./output/linux/$(OUTFILENAME))
 	$(eval WXCONFIG=./wx-config-linux)
 	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-x86_64_linux)
-	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) $(CXXFLAGS) $(LDLIBS) $(INCFLAGS)` -I./$(WXPREFIX)/lib64/wx/include -I./$(WXPREFIX)/include $(TEST_SOURCES) -o $(WXOUTPUT)
+	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) $(CXXFLAGS) $(LDLIBS) $(INCFLAGS)` $(INCFLAGS) -I/usr/include -I./$(WXPREFIX)/lib64/wx/include -I./$(WXPREFIX)/include -D__LINUX_DYNAMIC__ $(TEST_SOURCES) -o $(WXOUTPUT)
 
 win64_static: win64Prep_static win64Path
 	@echo "Defined win64 Static as target - Building";
@@ -35,10 +35,10 @@ win64_static: win64Prep_static win64Path
 	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-${HOST}_static)
 	$(eval WXWINPATH=$(WXPREFIX)/$(HOST)/bin)
 	$(eval WXLIBPATH=$(GCCWINPATH)/../$(HOST)/lib)
-	$(eval WININCFLAGS=-I./$(WXPREFIX)/lib64/wx/include -I./$(WXPREFIX)/include -I$(GCCWINPATH)/../include)
-	$(eval WINLDFLAGS=-L$(GCCWINPATH)/../lib64 -L$(WXPREFIX)/lib64 -lstdc++.dll -lstdc++)
+	$(eval WININCFLAGS=-I./$(WXPREFIX)/lib64/wx/include -I./$(WXPREFIX)/include -I$(GCCWINPATH)/../include) 
+	$(eval WINLDFLAGS=-L$(GCCWINPATH)/../lib64 -L$(WXPREFIX)/lib64 -lstdc++.dll -lstdc++ -lpsapi)
 	$(eval export PATH=$(GCCWINPATH):$(WXWINPATH):${PATH})
-	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=yes --host=$(HOST)` $(INCFLAGS) $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=yes --host=$(HOST)` $(WINLDFLAGS)
+	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=yes --host=$(HOST)` $(INCFLAGS) -D__WIN64_STATIC__ $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=yes --host=$(HOST)` $(WINLDFLAGS)
 	cp ${WXLIBPATH}/libgcc_s_seh-1.dll ${WXLIBPATH}/libstdc++-6.dll ./output/win64_static
 
 win64: win64Prep win64Path
@@ -50,12 +50,14 @@ win64: win64Prep win64Path
 	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-${HOST})
 	$(eval WXWINPATH=$(WXPREFIX)/bin)
 	$(eval WXLIBPATH=$(GCCWINPATH)/../lib)
-	$(eval WININCFLAGS=-I./tools/wxWidgets-3.0.2-${HOST}/lib64/wx/include/x86_64-mingw32-msw-unicode-3.0)
-	$(eval WINLDFLAGS="-L$(GCCWINPATH)/../lib -L$(WXPREFIX)/lib64" -L$(GCCWINPATH)/../lib -lwx_baseu-3.0-x86_64-mingw32.dll -lwx_mswu_core-3.0-x86_64-mingw32.dll)
+	$(eval WININCFLAGS=-I./$(WXPREFIX)/lib64/wx/include -I./$(WXPREFIX)/include -I$(GCCWINPATH)/../include) 
+	$(eval WINLDFLAGS=-L$(GCCWINPATH)/../lib64 -L$(WXPREFIX)/lib64 -lstdc++.dll -lstdc++ -lpsapi)
 	$(eval export PATH=$(GCCWINPATH):$(WXWINPATH):${PATH})
-	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=no --host=$(HOST)` $(INCFLAGS) $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=no --host=$(HOST)`
+	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=no --host=$(HOST)` $(INCFLAGS) -D__WIN64_DYNAMIC__ $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=no --host=$(HOST)` $(WINLDFLAGS)
 	cp ${WXLIBPATH}/libgcc_s_seh-1.dll ${WXLIBPATH}/libstdc++-6.dll ./output/win64
-	cp ${WXWINPATH}/../lib/wxmsw30u_core_gcc_custom.dll ${WXWINPATH}/../lib/wxbase30u_gcc_custom.dll ./output/win64
+	cp ${WXWINPATH}/../lib/wxmsw30u_core_gcc_custom.dll ./output/win64
+	cp ${WXWINPATH}/../lib/wxmsw30u_adv_gcc_custom.dll ./output/win64
+	cp ${WXWINPATH}/../lib/wxbase30u_gcc_custom.dll ./output/win64
 
 win32: win32Prep win32Path
 	@echo "Defined win32 as target - Building"; 
@@ -66,11 +68,13 @@ win32: win32Prep win32Path
 	$(eval WXPREFIX=./tools/wxWidgets-3.0.2-${HOST})
 	$(eval WXWINPATH=$(WXPREFIX)/bin)
 	$(eval WXLIBPATH=$(GCCWINPATH)/../lib)
-	$(eval WINLDFLAGS="-L$(WXPREFIX)/lib" -lwx_mswu-3.0-${HOST}.dll)
+	$(eval WINLDFLAGS="-L$(WXPREFIX)/lib" -lwx_mswu-3.0-${HOST}.dll -lstdc++.dll -lstdc++ -lpsapi)
 	$(eval export PATH=$(GCCWINPATH):$(WXWINPATH):${PATH})
-	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=no --host=$(HOST)` $(INCFLAGS) $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=no --host=$(HOST)`
+	`$(WXCONFIG) --prefix=$(WXPREFIX) $(CXX) --static=no --host=$(HOST)` $(INCFLAGS) -D__WIN32_DYNAMIC__ $(TEST_SOURCES) -o $(WXOUTPUT) `$(WXCONFIG) --prefix=$(WXPREFIX) $(CXXFLAGS) $(LDLIBS) --static=no --host=$(HOST)` $(WINLDFLAGS)
 	cp ${WXLIBPATH}/libgcc_s_sjlj-1.dll ${WXLIBPATH}/libstdc++-6.dll ./output/win32
-	cp ${WXWINPATH}/../lib/wxmsw30u_gcc_custom.dll ./output/win32
+	cp ${WXWINPATH}/../lib/wxmsw30u_core_gcc_custom.dll ./output/win32
+	cp ${WXWINPATH}/../lib/wxmsw30u_adv_gcc_custom.dll ./output/win32
+	cp ${WXWINPATH}/../lib/wxbase30u_gcc_custom.dll ./output/win32
 	
 all: 
 	@echo "Use one of the target definitions: win32, win64, linux";
@@ -78,10 +82,10 @@ all:
 	@echo "'make win32' 		- Builds the executable for 32Bit Windows ";
 	@echo "'make win64' 		- Builds the executable for 64Bit Windows ";
 	@echo "'make win64_static' 	- Builds the executable for Static 64Bit Windows ";
-# 	@echo "'make linux' 		- Builds the executable for linux. You need to have gcc toolchain installed ";
+ 	@echo "'make linux' 		- Builds the executable for linux. You need to have gcc toolchain installed ";
 	@echo "'make clean' 		- Deletes all objects and created executables";
 	@echo "'make tools' 		- Download and initalizes wxWidget dev environment and GCC mingw win32 toolchain";
-	@echo " NOTE 			- You will have to install the dev toolchain for you Linux System youself (gcc, binutils ...)";
+	@echo " NOTE 				- You will have to install the dev toolchain for you Linux System youself (gcc, binutils ...)";
 	@echo "'make cleanTools' 	- Deletes the toolchain";
 	exit 0;	
 
@@ -94,6 +98,7 @@ wget:
 	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxWidgets-3.0.2-i686-pc-mingw32.tar.gz;
 	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxWidgets-3.0.2-x86_64-pc-mingw32.tar.gz;
 	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxWidgets-3.0.2-x86_64-pc-mingw32_static.tar.gz;
+	wget --directory-prefix=./tools/ -c http://alemer.de/source_tools/wxwidgets-3.0.2-x86_64_linux.tar.gz;
 	
 tar:
 	tar --directory=./tools -xf ./tools/gcc-5.1.0-i686-mingw32.tar.gz;
@@ -102,12 +107,14 @@ tar:
 	tar --directory=./tools -xf ./tools/wxWidgets-3.0.2-i686-pc-mingw32.tar.gz;
 	tar --directory=./tools -xf ./tools/wxWidgets-3.0.2-x86_64-pc-mingw32.tar.gz;
 	tar --directory=./tools -xf ./tools/wxWidgets-3.0.2-x86_64-pc-mingw32_static.tar.gz;
+	tar --directory=./tools -xf ./tools/wxwidgets-3.0.2-x86_64_linux.tar.gz;
 	
 links:
 	ln -s tools/wxWidgets-3.0.2-i686-pc-mingw32/bin/wx-config wx-config-i686-pc-mingw32;
 	ln -s tools/wxWidgets-3.0.2-i686-pc-mingw32/bin/wx-config-static wx-config-i686-pc-mingw32-static;
 	ln -s tools/wxWidgets-3.0.2-x86_64-pc-mingw32/bin/wx-config wx-config-x86_64-pc-mingw32;
 	ln -s tools/wxWidgets-3.0.2-x86_64-pc-mingw32_static/bin/wx-config wx-config-x86_64-pc-mingw32-static;
+	ln -s tools/wxWidgets-3.0.2-x86_64_linux/bin/wx-config wx-config-linux;
 	
 linPrep:
 	mkdir -p output/linux
