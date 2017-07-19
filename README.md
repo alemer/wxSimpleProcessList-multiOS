@@ -12,7 +12,7 @@ git clone https://github.com/alemer/wxSimpleProcessList-multiOS.git
 
 TODO: 	Makefile 
 
-Use one of the target definitions: win32, win64, linux
+Use one of the target definitions: win32, win64, linux\n
 First call 'make tools' for the toolchain initialization
 'make win32'            - Builds the executable for 32Bit Windows 
 'make win64'            - Builds the executable for 64Bit Windows 
